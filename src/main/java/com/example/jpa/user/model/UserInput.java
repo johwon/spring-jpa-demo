@@ -20,7 +20,7 @@ public class UserInput {
     private String email;
 
     @NotBlank(message = "이름은 필수 항목입니다.")
-    private String username;
+    private String userName;
 
     @Size(min = 4, message = "비밀번호는 4자 이상 입력해야 합니다.")
     @NotBlank(message = "비밀번호는 필수 항목입니다.")
