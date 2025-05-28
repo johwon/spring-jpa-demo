@@ -14,6 +14,7 @@ import com.example.jpa.user.model.UserResponse;
 import com.example.jpa.user.model.UserUpdate;
 import com.example.jpa.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -195,5 +196,23 @@ public class ApiUserController {
         return ResponseEntity.ok().build();
     }
 
+    // 회원 탈퇴
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(()->new UserNotFoundException("사용자 정보가 없습니다."));
+
+        try {
+            userRepository.delete(user);
+        }catch (DataIntegrityViolationException e){
+            String message = "제약조건에 문제가 발생하였습니다.";
+            return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+        }catch (Exception e){
+            String message = "회원 탈퇴 중 문제가 발생하였습니다.";
+            return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+        }
+
+        return ResponseEntity.ok().build();
+    }
 
 }
