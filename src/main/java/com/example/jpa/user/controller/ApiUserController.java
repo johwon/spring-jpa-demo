@@ -25,6 +25,7 @@ import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/user")
@@ -219,6 +220,36 @@ public class ApiUserController {
                 .orElseThrow(()->new UserNotFoundException("일치하는 회원이 없습니다."));
 
         return ResponseEntity.ok().body(user.getEmail());
+    }
+
+    private String getResetPassword() {
+        return UUID.randomUUID().toString().replaceAll("-","").substring(0, 10);
+    }
+
+    // 비밀번호 초기화 요청
+    @GetMapping("/{id}/password/reset")
+    public ResponseEntity<?> resetUserPassword(@PathVariable Long id){
+        User user = userRepository.findById(id)
+                .orElseThrow(()->new UserNotFoundException("일치하는 회원이 없습니다."));
+
+        // 비밀번호 초기화
+        String resetPassword = getResetPassword();
+        String resetEncryptPassword = getEncryptPassword(resetPassword);
+        user.setPassword(resetEncryptPassword);
+        userRepository.save(user);
+
+        String message = String.format("[%s]님의 임시 비밀번호는 [%s] 입니다.",
+                user.getUserName(), resetPassword);
+        sendSMS(message);
+
+        return ResponseEntity.ok().build();
+
+    }
+
+    void sendSMS(String message){
+        System.out.println("[문자메시지전송]");
+        System.out.println(message);
+
     }
 
 }
