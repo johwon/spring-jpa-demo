@@ -16,6 +16,8 @@ import com.example.jpa.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
@@ -134,6 +136,11 @@ public class ApiUserController {
         return noticeResponsesList;
     }
 
+    private String getEncryptPassword(String password) {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        return bCryptPasswordEncoder.encode(password);
+    }
+
     @PostMapping
     public ResponseEntity<?> addUser(@RequestBody @Valid UserInput userInput, Errors errors){
 
@@ -153,7 +160,7 @@ public class ApiUserController {
                 .email(userInput.getEmail())
                 .userName(userInput.getUserName())
                 .phone(userInput.getPhone())
-                .password(userInput.getPassword())
+                .password(getEncryptPassword(userInput.getPassword()))
                 .regDate(LocalDateTime.now())
                 .build();
         userRepository.save(user);
