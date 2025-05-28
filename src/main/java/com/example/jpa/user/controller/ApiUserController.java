@@ -1,8 +1,10 @@
 package com.example.jpa.user.controller;
 
 import com.example.jpa.notice.entity.Notice;
+import com.example.jpa.notice.entity.NoticeLike;
 import com.example.jpa.notice.model.NoticeResponse;
 import com.example.jpa.notice.model.ResponseError;
+import com.example.jpa.notice.repository.NoticeLikeRepository;
 import com.example.jpa.notice.repository.NoticeRepository;
 import com.example.jpa.user.entity.User;
 import com.example.jpa.user.exception.ExistEmailException;
@@ -21,6 +23,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.PushBuilder;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -34,6 +37,7 @@ public class ApiUserController {
 
     private final UserRepository userRepository;
     private final NoticeRepository noticeRepository;
+    private final NoticeLikeRepository noticeLikeRepository;
 
 //    @PostMapping
 //    public ResponseEntity<?> addUser(@RequestBody @Valid UserInput userInput, Errors errors) {
@@ -249,7 +253,16 @@ public class ApiUserController {
     void sendSMS(String message){
         System.out.println("[문자메시지전송]");
         System.out.println(message);
+    }
 
+    @GetMapping("/{id}/notice/like")
+    public List<NoticeLike> likeNotice(@PathVariable Long id){
+        User user = userRepository.findById(id)
+                .orElseThrow(()->new UserNotFoundException("일치하는 회원이 없습니다."));
+
+        List<NoticeLike> noticeLikeList = noticeLikeRepository.findByUser(user);
+
+        return noticeLikeList;
     }
 
 }
