@@ -13,7 +13,6 @@ create table USER
     REG_DATE    TIMESTAMP,
     UPDATE_DATE TIMESTAMP,
     STATUS      INTEGER,
-
     LOCK_YN     BOOLEAN
 );
 
