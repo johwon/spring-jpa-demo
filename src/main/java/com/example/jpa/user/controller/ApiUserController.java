@@ -8,10 +8,7 @@ import com.example.jpa.user.entity.User;
 import com.example.jpa.user.exception.ExistEmailException;
 import com.example.jpa.user.exception.PasswordNotMatchException;
 import com.example.jpa.user.exception.UserNotFoundException;
-import com.example.jpa.user.model.UserInput;
-import com.example.jpa.user.model.UserInputPassword;
-import com.example.jpa.user.model.UserResponse;
-import com.example.jpa.user.model.UserUpdate;
+import com.example.jpa.user.model.*;
 import com.example.jpa.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -213,6 +210,15 @@ public class ApiUserController {
         }
 
         return ResponseEntity.ok().build();
+    }
+
+    // 회원 아이디(이메일) 찾기
+    @GetMapping
+    public ResponseEntity<?> findUser(@RequestBody UserInputFind userInputFind){
+        User user = userRepository.findByUserNameAndPhone(userInputFind.getUserName(), userInputFind.getPhone())
+                .orElseThrow(()->new UserNotFoundException("일치하는 회원이 없습니다."));
+
+        return ResponseEntity.ok().body(user.getEmail());
     }
 
 }
