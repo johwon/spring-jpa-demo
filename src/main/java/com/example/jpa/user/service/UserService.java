@@ -1,5 +1,6 @@
 package com.example.jpa.user.service;
 
+import com.example.jpa.board.model.ServiceResult;
 import com.example.jpa.user.entity.User;
 import com.example.jpa.user.model.UserLogCount;
 import com.example.jpa.user.model.UserNoticeCount;
@@ -20,4 +21,8 @@ public interface UserService {
 
     // 좋아요를 가장 많이 한 회원 목록
     List<UserLogCount> getUserLikeBest();
+
+    ServiceResult addInterestUser(Long id, String email);
+
+    ServiceResult deleteInterestUser(Long interestId, String email);
 }

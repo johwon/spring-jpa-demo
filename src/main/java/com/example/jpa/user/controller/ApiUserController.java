@@ -3,6 +3,11 @@ package com.example.jpa.user.controller;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.example.jpa.board.entity.Board;
+import com.example.jpa.board.entity.BoardComment;
+import com.example.jpa.board.model.ServiceResult;
+import com.example.jpa.board.service.BoardService;
+import com.example.jpa.common.model.ResponseResult;
 import com.example.jpa.notice.entity.Notice;
 import com.example.jpa.notice.entity.NoticeLike;
 import com.example.jpa.notice.model.NoticeResponse;
@@ -15,6 +20,7 @@ import com.example.jpa.user.exception.PasswordNotMatchException;
 import com.example.jpa.user.exception.UserNotFoundException;
 import com.example.jpa.user.model.*;
 import com.example.jpa.user.repository.UserRepository;
+import com.example.jpa.user.service.PointService;
 import com.example.jpa.util.JWTUtils;
 import com.example.jpa.util.PasswordUtils;
 import lombok.RequiredArgsConstructor;
@@ -50,47 +56,9 @@ public class ApiUserController {
     private final NoticeRepository noticeRepository;
     private final NoticeLikeRepository noticeLikeRepository;
 
-//    @PostMapping
-//    public ResponseEntity<?> addUser(@RequestBody @Valid UserInput userInput, Errors errors) {
-//
-//        List<ResponseError> responseErrorList = new ArrayList<>();
-//
-//        if(errors.hasErrors()){
-//            errors.getAllErrors().forEach((e)->{
-//                responseErrorList.add(ResponseError.of((FieldError) e));
-//            });
-//
-//            return new ResponseEntity<>(responseErrorList, HttpStatus.BAD_REQUEST);
-//        }
-//
-//        return ResponseEntity.ok().build();
-//    }
+    private final BoardService boardService;
+    private final PointService pointService;
 
-//    @PostMapping
-//    public ResponseEntity<?> addUser(@RequestBody @Valid UserInput userInput, Errors errors) {
-//
-//        List<ResponseError> responseErrorList = new ArrayList<>();
-//
-//        if(errors.hasErrors()){
-//            errors.getAllErrors().forEach((e)->{
-//                responseErrorList.add(ResponseError.of((FieldError) e));
-//            });
-//
-//            return new ResponseEntity<>(responseErrorList, HttpStatus.BAD_REQUEST);
-//        }
-//
-//        User user = User.builder()
-//                .email(userInput.getEmail())
-//                .userName(userInput.getUserName())
-//                .password(userInput.getPassword())
-//                .phone(userInput.getPhone())
-//                .regDate(LocalDateTime.now())
-//                .build();
-//
-//        userRepository.save(user);
-//
-//        return ResponseEntity.ok().build();
-//    }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(@PathVariable Long id,
@@ -356,5 +324,53 @@ public class ApiUserController {
 //
 //        return ResponseEntity.ok().build();
 //    }
+
+
+    // 내 게시글 조회
+    @GetMapping("/board/post")
+    public ResponseEntity<?> myPost(@RequestHeader("F-TOKEN") String token){
+
+        String email = "";
+        try {
+            email = JWTUtils.getIssuer(token);
+        }catch (SignatureVerificationException e){
+            return ResponseResult.fail("토큰이 유효하지 않습니다.");
+        }
+
+        List<Board> list = boardService.postList(email);
+
+        return ResponseResult.success(list);
+    }
+
+    // 내 코멘트 목록 조회
+    @GetMapping("/board/comment")
+    public ResponseEntity<?> myComments(@RequestHeader("F-TOKEN") String token){
+
+        String email = "";
+        try {
+            email = JWTUtils.getIssuer(token);
+        }catch (SignatureVerificationException e){
+            return ResponseResult.fail("토큰이 유효하지 않습니다.");
+        }
+
+        List<BoardComment> list = boardService.commentList(email);
+
+        return ResponseResult.success(list);
+    }
+
+    // 게시글 작성 시 포인트
+    @PostMapping("/point")
+    public ResponseEntity<?> userPoint(@RequestHeader("F-TOKEN") String token,
+                                       @RequestBody UserPointInput userPointInput){
+        String email = "";
+        try {
+            email = JWTUtils.getIssuer(token);
+        }catch (SignatureVerificationException e){
+            return ResponseResult.fail("토큰이 유효하지 않습니다.");
+        }
+
+        ServiceResult result = pointService.addPoint(email, userPointInput);
+        return ResponseResult.result(result);
+    }
 
 }
