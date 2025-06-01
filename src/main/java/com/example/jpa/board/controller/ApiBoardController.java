@@ -223,11 +223,25 @@ public class ApiBoardController {
         }
 
         return ResponseResult.success(board);
-
-
-
     }
 
+
+    @GetMapping
+    public ResponseEntity<?> list(){
+
+        List<Board> boardList = boardService.list();
+        return ResponseResult.success(boardList);
+    }
+
+    @PostMapping
+    public ResponseEntity<?> add(@RequestBody BoardInput boardInput,
+                                 @RequestHeader("F-TOKEN") String token){
+
+        String email = JWTUtils.getIssuer(token);
+
+        ServiceResult result = boardService.add(boardInput, email);
+        return ResponseResult.result(result);
+    }
 
 }
 
