@@ -37,6 +37,9 @@ dependencies {
 	// https://mvnrepository.com/artifact/com.auth0/java-jwt
 	implementation("com.auth0:java-jwt:4.5.0")
 
+	// https://mvnrepository.com/artifact/ch.simas.qlrm/qlrm
+	implementation group: 'ch.simas.qlrm', name: 'qlrm', version: '1.7.1'
+
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
