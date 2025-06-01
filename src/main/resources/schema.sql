@@ -56,6 +56,13 @@ create table USER_LOGIN_HISTORY
     IP_ADDR   VARCHAR(255)
 );
 
+create table LOGS
+(
+    ID          BIGINT auto_increment primary key,
+    TEXT        CLOB,
+    REG_DATE    TIMESTAMP
+);
+
 
 create table USER_INTEREST
 (

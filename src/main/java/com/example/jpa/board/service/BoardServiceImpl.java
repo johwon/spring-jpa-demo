@@ -411,4 +411,15 @@ public class BoardServiceImpl implements BoardService{
         return list;
     }
 
+    @Override
+    public Board detail(Long id) {
+
+        Optional<Board> optionalBoard = boardRepository.findById(id);
+        if(!optionalBoard.isPresent()){
+            throw new BizException("게시물이 없습니다.");
+        }
+       return optionalBoard.get();
+
+    }
+
 }

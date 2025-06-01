@@ -1,13 +1,11 @@
 package com.example.jpa.user.model;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 
+@ToString
 @Data
 @Builder
 @NoArgsConstructor

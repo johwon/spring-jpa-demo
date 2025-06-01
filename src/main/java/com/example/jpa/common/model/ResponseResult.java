@@ -9,8 +9,11 @@ import java.util.List;
 
 public class ResponseResult {
     public static ResponseEntity<?> fail(String message) {
+        return fail(message, null);
+    }
 
-        return ResponseEntity.badRequest().body(ResponseMessage.fail(message));
+    public static ResponseEntity<?> fail(String message, Object data) {
+        return ResponseEntity.badRequest().body(ResponseMessage.fail(message, data));
     }
 
     public static ResponseEntity<?> success() {
@@ -18,7 +21,6 @@ public class ResponseResult {
     }
 
     public static ResponseEntity<?> success(Object data) {
-
         return ResponseEntity.ok().body(ResponseMessage.success(data));
     }
 
