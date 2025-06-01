@@ -3,10 +3,12 @@ package com.example.jpa.user.service;
 import com.example.jpa.board.model.ServiceResult;
 import com.example.jpa.user.entity.User;
 import com.example.jpa.user.model.UserLogCount;
+import com.example.jpa.user.model.UserLogin;
 import com.example.jpa.user.model.UserNoticeCount;
 import com.example.jpa.user.model.UserSummary;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
 import java.util.List;
 
 public interface UserService {
@@ -25,4 +27,6 @@ public interface UserService {
     ServiceResult addInterestUser(Long id, String email);
 
     ServiceResult deleteInterestUser(Long interestId, String email);
+
+    User login(@Valid UserLogin userLogin);
 }

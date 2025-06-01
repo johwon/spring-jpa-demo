@@ -1,17 +1,19 @@
 package com.example.jpa.user.service;
 
 import com.example.jpa.board.model.ServiceResult;
+import com.example.jpa.common.exception.BizException;
+import com.example.jpa.logs.service.LogsService;
 import com.example.jpa.user.entity.User;
 import com.example.jpa.user.entity.UserInterest;
-import com.example.jpa.user.model.UserLogCount;
-import com.example.jpa.user.model.UserNoticeCount;
-import com.example.jpa.user.model.UserStatus;
-import com.example.jpa.user.model.UserSummary;
+import com.example.jpa.user.model.*;
 import com.example.jpa.user.repository.UserCustomRepository;
 import com.example.jpa.user.repository.UserInterestRepository;
 import com.example.jpa.user.repository.UserRepository;
+import com.example.jpa.util.PasswordUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.web.PortResolverImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
@@ -25,6 +27,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserCustomRepository userCustomRepository;
     private final UserInterestRepository userInterestRepository;
+    private final LogsService logsService;
 
     @Override
     public UserSummary getUserStatusCount() {
@@ -122,5 +125,21 @@ public class UserServiceImpl implements UserService {
 
         userInterestRepository.delete(userInterest);
         return ServiceResult.success();
+    }
+
+    @Override
+    public User login(UserLogin userLogin) {
+
+        Optional<User> optionalUser = userRepository.findByEmail(userLogin.getEmail());
+        if(!optionalUser.isPresent()){
+            throw new BizException("사용자가 없습니다.");
+        }
+        User user = optionalUser.get();
+        
+        if(!PasswordUtils.equalPassword(userLogin.getPassword(), user.getPassword())){
+            throw new BizException("일치하는 정보가 없습니다.");
+        }
+
+        return user;
     }
 }
